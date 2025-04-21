@@ -18,7 +18,14 @@ const SignupScheme = new mongoose.Schema({
         type:Number,
         require:true
     },
-    
+    verify:{
+        type:Boolean,
+        require:true
+    },
+    passverify:{
+        type:Boolean,
+        require:true
+    }
 }, 
 {
     timestamps: true 

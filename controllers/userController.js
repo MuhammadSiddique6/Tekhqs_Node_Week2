@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const User = require("../models/Signup");
 const nodemailer = require("nodemailer")
-
+const otpfun = require("../resuable/otp")
 
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -14,31 +14,10 @@ exports.signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    
-    // Generate a 4-digit OTP (between 1000–9999)
-    const otp = Math.floor(1000 + Math.random() * 9000);
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.ADMIN_GMAIL,
-        pass: process.env.Email_Password,
-      },
-    });
-
-    const mailOptions = {
-      from: process.env.ADMIN_GMAIL,
-      to: email,
-      subject: "Your OTP for Signup",
-      html: `<h3>Your OTP is: <strong>${otp}</strong></h3>`,
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    const newUser = new User({ name, email, password: hashedPassword, otp });
+   
+    const otp = await otpfun(email);
+   
+    const newUser = new User({ name, email, password: hashedPassword, otp, verify:false , passverify:true});
     await newUser.save();
 
     res.status(200).send("User added and OTP sent!");
