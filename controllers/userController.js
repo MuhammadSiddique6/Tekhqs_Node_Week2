@@ -15,7 +15,7 @@ exports.signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const {otp,expiry} = await otpfun(email);
+    const { otp, expiry } = await otpfun(email);
 
     const newUser = new User({
       name,
@@ -39,7 +39,7 @@ exports.signin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    console.log(user);
+  
     if (!user) {
       return res.status(400).send("User not found");
     } else {
@@ -47,19 +47,22 @@ exports.signin = async (req, res) => {
       if (!isMatch) {
         return res.status(400).send("Invalid password");
       } else {
-        const token = jwt.sign({ email: user.email }, SECRET_KEY, {
-          expiresIn: "2d",
-        });
-        console.log(token);
-        return res.status(200).json({
-          message: "Login successful",
-          token,
-          user: {
-            id: user._id,
-            email: user.email,
-            name: user.name,
-          },
-        });
+        if (user.verify === true) {
+          const token = jwt.sign({ email: user.email }, SECRET_KEY, {
+            expiresIn: "2d",
+          });
+          return res.status(200).json({
+            message: "Login successful",
+            token,
+            user: {
+              id: user._id,
+              email: user.email,
+              name: user.name,
+            },
+          });
+        } else {
+          return res.status(400).send("Not verified");
+        }
       }
     }
   } catch (error) {
