@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const User = require("../models/Signup");
 const nodemailer = require("nodemailer")
-const otpfun = require("../resuable/otp")
+const otpfun = require("../utility/otp")
 
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;

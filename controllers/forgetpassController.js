@@ -2,7 +2,7 @@ const express = require("express");
 const User = require("../models/Signup");
 const nodemailer =require("nodemailer");
 const bcrypt=require("bcrypt");
-const otpfun = require("../resuable/otp")
+const otpfun = require("../utility/otp")
 
 exports.forgetotp =async(req,res)=>{
  try{
