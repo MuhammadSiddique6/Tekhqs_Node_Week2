@@ -18,6 +18,9 @@ const SignupScheme = new mongoose.Schema({
         type:Number,
         require:true
     },
+    otpexpiry:{
+        type:Date,
+    },
     verify:{
         type:Boolean,
         require:true

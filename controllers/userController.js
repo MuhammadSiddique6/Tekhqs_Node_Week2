@@ -1,8 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const User = require("../models/Signup");
-const nodemailer = require("nodemailer")
-const otpfun = require("../utility/otp")
+const jwt = require("jsonwebtoken");
+const otpfun = require("../utility/otp");
+const SECRET_KEY = process.env.SECRET_KEY;
 
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -14,10 +15,17 @@ exports.signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-   
-    const otp = await otpfun(email);
-   
-    const newUser = new User({ name, email, password: hashedPassword, otp, verify:false , passverify:true});
+    const {otp,expiry} = await otpfun(email);
+
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      otp,
+      expiry,
+      verify: false,
+      passverify: true,
+    });
     await newUser.save();
 
     res.status(200).send("User added and OTP sent!");
@@ -31,6 +39,7 @@ exports.signin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
+    console.log(user);
     if (!user) {
       return res.status(400).send("User not found");
     } else {
@@ -38,7 +47,19 @@ exports.signin = async (req, res) => {
       if (!isMatch) {
         return res.status(400).send("Invalid password");
       } else {
-        res.status(200).send("Login successful!");
+        const token = jwt.sign({ email: user.email }, SECRET_KEY, {
+          expiresIn: "2d",
+        });
+        console.log(token);
+        return res.status(200).json({
+          message: "Login successful",
+          token,
+          user: {
+            id: user._id,
+            email: user.email,
+            name: user.name,
+          },
+        });
       }
     }
   } catch (error) {
@@ -60,19 +81,16 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-exports.updateUsers = async (req, res)=>
-{
-    const {email, name } = req.body;
-    try{
-        const user = await User.findOneAndUpdate({email}, {name});
-        if (!user) {
-            return res.status(400).send("User not found");
-        } else {
-            res.status(200).send("User updated successfully!");
-        }
-    } 
-    catch (error) {
-        res.status(500).send("Error updating user");
+exports.updateUsers = async (req, res) => {
+  const { email, name } = req.body;
+  try {
+    const user = await User.findOneAndUpdate({ email }, { name });
+    if (!user) {
+      return res.status(400).send("User not found");
+    } else {
+      res.status(200).send("User updated successfully!");
     }
+  } catch (error) {
+    res.status(500).send("Error updating user");
+  }
 };
-

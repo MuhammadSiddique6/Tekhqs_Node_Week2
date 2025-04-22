@@ -3,6 +3,7 @@ const nodemailer =require("nodemailer");
 
 const otpfun= async(email)=>{
     const otp = Math.floor(1000 + Math.random() * 9000);
+    const expiry = Date.now() + 5 * 60 * 1000;
     const transporter = nodemailer.createTransport({
       service: "gmail",
       host: "smtp.gmail.com",
@@ -22,6 +23,6 @@ const otpfun= async(email)=>{
     };
 
     await transporter.sendMail(mailOptions);
-    return otp;
+    return {otp,expiry};
 };
 module.exports = otpfun;
