@@ -7,7 +7,7 @@ exports.forgetotp =async(req,res)=>{
  try{
     const {email}=req.body;
     const user = await User.findOne({ email });
-    const otp = await otpfun(email);
+    const {otp} = await otpfun(email);
     await User.updateOne(
         { _id: user._id },
         { $set: { otp:otp } }

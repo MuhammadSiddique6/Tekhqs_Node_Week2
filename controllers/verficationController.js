@@ -10,7 +10,7 @@ exports.verification = async (req, res) => {
     if (!user) {
       return res.status(400).send("User not found");
     }
-    if (Date.now() > record.expiresAt) {
+    if (Date.now() > user.otpexpiry) {
       return res.status(400).json({ message: "OTP has expired" });
     } else {
       if (user.otp === otp) {
