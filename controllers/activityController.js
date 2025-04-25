@@ -27,7 +27,7 @@ exports.createtask = async (req, res) => {
       });
       await newtrack.save();
 
-      res.status(200).send("chal bhai pizza ready kr");
+      res.status(200).send("successful");
     }
   } catch (err) {
     res.status(500).send("Server Issue ", err);
@@ -53,7 +53,7 @@ exports.starttask = async (req, res) => {
       });
       await newtrack.save();
 
-      res.status(200).send("chal bhai pizza ready kr");
+      res.status(200).send("successful");
     }
   } catch (err) {
     res.status(500).send("Server Issue ", err);
@@ -79,7 +79,7 @@ exports.endtask = async (req, res) => {
       });
       await newtrack.save();
 
-      res.status(200).send("chal bhai pizza ready kr");
+      res.status(200).send("successful");
     }
   } catch (err) {
     res.status(500).send("Server Issue ", err);
