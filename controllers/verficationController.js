@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/Signup");
 const nodemailer = require("nodemailer");
+const otpfun = require("../utility/otp");
 
 exports.verification = async (req, res) => {
   const { email, otp } = req.body;
@@ -14,7 +15,10 @@ exports.verification = async (req, res) => {
       return res.status(400).json({ message: "OTP has expired" });
     } else {
       if (user.otp === otp) {
-        await User.updateOne({ _id: user._id }, { $set: { verify: true } });
+        await User.updateOne(
+          { _id: user._id },
+          { $set: { verify: true, otp: null, otpexpiry: null } }
+        );
         return res.status(200).send("OTP matched and user verified");
       } else {
         return res.status(400).send("Incorrect OTP");
@@ -28,10 +32,13 @@ exports.verification = async (req, res) => {
 
 exports.resend = async (req, res) => {
   try {
-    const otp = Math.floor(1000 + Math.random() * 9000);
     const { email } = req.body;
+    const { otp, expiry } = await otpfun(email);
     const user = await User.findOne({ email });
-    await User.updateOne({ _id: user._id }, { $set: { otp: otp } });
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { otp: otp, otpexpiry: expiry } }
+    );
 
     const transporter = nodemailer.createTransport({
       service: "gmail",

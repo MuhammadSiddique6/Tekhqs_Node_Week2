@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/Signup");
 const jwt = require("jsonwebtoken");
 const otpfun = require("../utility/otp");
+
 const SECRET_KEY = process.env.SECRET_KEY;
 
 exports.signup = async (req, res) => {
@@ -18,13 +19,15 @@ exports.signup = async (req, res) => {
     const { otp, expiry } = await otpfun(email);
 
     const newUser = new User({
+      role: "users",
       name,
       email,
       password: hashedPassword,
       otp,
-      expiry,
+      otpexpiry: expiry,
       verify: false,
       passverify: true,
+      status: true,
     });
     await newUser.save();
 
@@ -39,7 +42,7 @@ exports.signin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-  
+
     if (!user) {
       return res.status(400).send("User not found");
     } else {
@@ -47,10 +50,12 @@ exports.signin = async (req, res) => {
       if (!isMatch) {
         return res.status(400).send("Invalid password");
       } else {
-        if (user.verify === true) {
+        if (user.verify === true && user.status === true) {
           const token = jwt.sign({ email: user.email }, SECRET_KEY, {
             expiresIn: "2d",
           });
+          user.token = token;
+          await user.save();
           return res.status(200).json({
             message: "Login successful",
             token,
@@ -58,10 +63,11 @@ exports.signin = async (req, res) => {
               id: user._id,
               email: user.email,
               name: user.name,
+              role: user.role,
             },
           });
         } else {
-          return res.status(400).send("Not verified");
+          return res.status(400).send("Not verified or Blocked By Admin");
         }
       }
     }
@@ -95,5 +101,35 @@ exports.updateUsers = async (req, res) => {
     }
   } catch (error) {
     res.status(500).send("Error updating user");
+  }
+};
+
+exports.logout = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.status(400).send("User not login");
+    } else {
+      if (user.verify === true && user.status === true) {
+        const token = jwt.sign({ email: user.email }, SECRET_KEY, {
+          expiresIn: "1s",
+        });
+        user.token = token;
+        await user.save();
+        return res.status(200).json({
+          message: "Logout successful",
+          user: {
+            id: user._id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          },
+        });
+      }
+    }
+  } catch (error) {
+    res.status(500).send("Error Server");
+    console.log(error);
   }
 };
