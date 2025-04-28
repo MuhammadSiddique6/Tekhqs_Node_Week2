@@ -29,7 +29,14 @@ exports.changerole = async (req, res) => {
 
 exports.getalluser = async (req, res) => {
   try {
-    const users = await UserModel.find({ role: { $in: ["admins", "users"] } });
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const query = { role: { $in: ["admins", "users"] } };
+    const users = await UserModel.find(query).skip((page - 1) * limit).limit(limit);
+    const totalusers = await UserModel.countDocuments(query);
+    const totalpages = Math.ceil(totalusers / limit);
+    const nextpage = page < totalpages ? page + 1 : null;
+
     res.status(200).json({
       message: "All Users",
       users: users.map((user) => ({
@@ -38,22 +45,39 @@ exports.getalluser = async (req, res) => {
         name: user.name,
         role: user.role,
       })),
+      page,
+      nextpage,
+      totalpages,
+      totalusers,
     });
   } catch (error) {
-    res.status(500).send("Server Error", error);
-  }
+    console.error(error);
+    res.status(500).send("Server Error", error);  }
 };
+
 
 exports.getusers = async (req, res) => {
   try {
-    const users = await UserModel.find({ role: "users" });
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const query ={ role: "users" }   
+    const users = await UserModel.find(query).skip((page - 1) * limit).limit(limit);
+    const totalusers = await UserModel.countDocuments(query);
+    const totalpages = Math.ceil(totalusers / limit);
+    const nextpage = page < totalpages ? page + 1 : null;
+
     res.status(200).json({
-      message: "All Users",
+      message: "Only Users",
       users: users.map((user) => ({
         id: user._id,
         email: user.email,
         name: user.name,
+        role: user.role,
       })),
+      page,
+      nextpage,
+      totalpages,
+      totalusers,
     });
   } catch (error) {
     res.status(500).send("Server Error", error);
