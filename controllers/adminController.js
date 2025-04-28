@@ -32,7 +32,9 @@ exports.getalluser = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
     const query = { role: { $in: ["admins", "users"] } };
-    const users = await UserModel.find(query).skip((page - 1) * limit).limit(limit);
+    const users = await UserModel.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
     const totalusers = await UserModel.countDocuments(query);
     const totalpages = Math.ceil(totalusers / limit);
     const nextpage = page < totalpages ? page + 1 : null;
@@ -52,16 +54,18 @@ exports.getalluser = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Server Error", error);  }
+    res.status(500).send("Server Error", error);
+  }
 };
-
 
 exports.getusers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
-    const query ={ role: "users" }   
-    const users = await UserModel.find(query).skip((page - 1) * limit).limit(limit);
+    const query = { role: "users" };
+    const users = await UserModel.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
     const totalusers = await UserModel.countDocuments(query);
     const totalpages = Math.ceil(totalusers / limit);
     const nextpage = page < totalpages ? page + 1 : null;
