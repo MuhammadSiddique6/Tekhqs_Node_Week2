@@ -14,6 +14,6 @@ app.use("/api/users", require("./routes/user"));
 app.use("/api/verify", require("./routes/verficaltion"));
 app.use("/api/forgetpassword", require("./routes/forgetpassword.js"));
 app.use("/api/admin", require("./routes/admin.js"));
-app.listen(PORT, (req,res) => {
-  logger.info(`Server running at http://localhost:${PORT}`,res.send("Deployed"));
+app.listen(PORT, () => {
+  logger.info(`Server running at http://localhost:${PORT}`);
 });
