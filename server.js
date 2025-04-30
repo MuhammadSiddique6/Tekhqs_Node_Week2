@@ -1,11 +1,12 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require('cors');
 const connectDB = require("./config/db");
 //const logger = require("./winston/index.js");
 const serverless = require("serverless-http");
 
 const app = express();
-
+app.use(cors());
 // Connect to DB
 connectDB();
 
