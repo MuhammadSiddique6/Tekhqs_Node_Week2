@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", require("../routes/user"));
-app.use("/api/verify", require("../routes/verification")); // fixed typo in filename
+app.use("/api/verify", require("../routes/verificaltion")); // fixed typo in filename
 app.use("/api/forgetpassword", require("../routes/forgetpassword"));
 app.use("/api/admin", require("../routes/admin"));
 
