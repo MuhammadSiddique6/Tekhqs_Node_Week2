@@ -1,7 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 const connectDB = require("./config/db");
-const logger = require("./winston/index.js");
+//const logger = require("./winston/index.js");
 const serverless = require("serverless-http");
 
 const app = express();
@@ -27,7 +27,9 @@ app.use("/api/admin", require("./routes/admin.js"));
 if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
-    logger.info(`Server running at http://localhost:${PORT}`);
+    //logger.info(`Server running at http://localhost:${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
+
   });
 }
 
