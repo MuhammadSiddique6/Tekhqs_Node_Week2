@@ -29,8 +29,8 @@ exports.createtask = async (req, res) => {
 
       res.status(200).send("successful");
     }
-  } catch (err) {
-    res.status(500).send("Server Issue ", err);
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
   }
 };
 exports.starttask = async (req, res) => {
@@ -55,8 +55,8 @@ exports.starttask = async (req, res) => {
 
       res.status(200).send("successful");
     }
-  } catch (err) {
-    res.status(500).send("Server Issue ", err);
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
   }
 };
 exports.endtask = async (req, res) => {
@@ -81,7 +81,7 @@ exports.endtask = async (req, res) => {
 
       res.status(200).send("successful");
     }
-  } catch (err) {
-    res.status(500).send("Server Issue ", err);
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
   }
 };
