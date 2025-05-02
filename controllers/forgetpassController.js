@@ -12,9 +12,9 @@ exports.forgetotp = async (req, res) => {
       { _id: user._id },
       { $set: { otp: otp, otpexpiry: expiry } }
     );
-    res.status(200).send("otp send");
-  } catch {
-    res.status(400).send("otp not send");
+    res.status(200).send("Otp sent");
+  } catch (error){
+    res.status(500).json({ message: "Otp not send error:", error: error.message });
   }
 };
 
@@ -38,8 +38,8 @@ exports.forgetpass = async (req, res) => {
       return res.status(400).send("Incorrect OTP");
     }
   } catch (error) {
-    console.error("Forget password error:", error);
-    return res.status(500).send("Server Error");
+    
+    res.status(500).json({ message: "Forget password error:", error: error.message });
   }
 };
 
@@ -66,7 +66,6 @@ exports.newpassword = async (req, res) => {
       return res.status(400).send("OTP not verified or already used");
     }
   } catch (error) {
-    console.error("Password reset error:", error);
-    return res.status(500).send("Server Error");
+    res.status(500).json({ message: "Password Reset Error:", error: error.message });
   }
 };

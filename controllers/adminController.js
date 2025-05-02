@@ -23,7 +23,7 @@ exports.changerole = async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(500).send("Server Error", error);
+    res.status(500).json({ message: "Error", error: error.message });
   }
 };
 
@@ -84,7 +84,7 @@ exports.getusers = async (req, res) => {
       totalusers,
     });
   } catch (error) {
-    res.status(500).send("Server Error", error);
+    res.status(500).json({ message: "Error", error: error.message });
   }
 };
 
@@ -103,8 +103,7 @@ exports.allstatus = async (req, res) => {
       res.status(400).send("status already change");
     }
   } catch (error) {
-    res.status(500).send("Server Error", error);
-    console.log(error);
+    res.status(500).json({ message: "Error", error: error.message });
   }
 };
 
@@ -120,6 +119,6 @@ exports.userstatus = async (req, res) => {
       res.status(400).send("status already change");
     }
   } catch (error) {
-    res.status(500).send("Server Error", error);
+    res.status(500).json({ message: "Error", error: error.message });
   }
 };

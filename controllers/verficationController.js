@@ -25,8 +25,7 @@ exports.verification = async (req, res) => {
       }
     }
   } catch (error) {
-    console.error("Verification Error:", error);
-    return res.status(500).send("Server Error");
+    res.status(500).json({ message: "Verification Error:", error: error.message });
   }
 };
 
@@ -61,6 +60,6 @@ exports.resend = async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.status(200).send("Resend Otp successfully");
   } catch (error) {
-    res.status(400).send("error:", error);
+    res.status(500).json({ message: "Resend Otp Error:", error: error.message });
   }
 };

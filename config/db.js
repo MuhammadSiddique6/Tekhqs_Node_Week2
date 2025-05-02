@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
-const logger = require("../winston/index");
+//const logger = require("../winston/index");
 require("dotenv").config();
 const dbConnects = async () => {
   try {
-    await mongoose.connect(process.env.DB_URL);
-    logger.info("Connected to MongoDB");
+    await mongoose.connect("mongodb+srv://user123:user123@week2.eknzkbw.mongodb.net/?retryWrites=true&w=majority&appName=week2");
+    console.log("Connected to MongoDB");
   } catch (err) {
-    logger.error("MongoDB Connection Error:", err.message);
+    //logger.error("MongoDB Connection Error:", err.message);
     process.exit(1);
   }
 };
